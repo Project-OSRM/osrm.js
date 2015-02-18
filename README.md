@@ -4,9 +4,6 @@ Browser client library for [Open Source Routing Machine - OSRM](https://github.c
 
 The interface is compatible with [node-osrm](https://github.com/Project-OSRM/node-osrm).
 
-The library is written using ECMAScript 6 and uses [babelify](https://github.com/babel/babelify) to translate that
-into ECMAScript 5.
-
 # Example
 
 ```js
