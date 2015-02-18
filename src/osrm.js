@@ -1,4 +1,3 @@
-/* jshint: esnext: true */
+var client = require('./client.js');
 
-export * from './client';
-
+if (typeof module !== 'undefined') module.exports = client;

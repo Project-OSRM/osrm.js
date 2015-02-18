@@ -1,15 +1,15 @@
 {
   "name": "osrm-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "REST client for the OSRM server API",
   "main": "src/osrm.js",
   "directories": {
     "dist": "dist"
   },
   "scripts": {
-    "test": "browserify ./test/test.js -t babelify > dist/osrm.test.js",
-    "build-dev": "browserify -d src/osrm.js -t babelify -s osrm > dist/osrm.dev.js",
-    "build-min": "browserify src/osrm.js -t babelify -s osrm | uglifyjs -c warnings=false -m > dist/osrm.min.js",
+    "test": "browserify ./test/test.js > dist/osrm.test.js",
+    "build-dev": "browserify -d src/osrm.js -s osrm > dist/osrm.dev.js",
+    "build-min": "browserify src/osrm.js -s osrm | uglifyjs -c warnings=false -m > dist/osrm.min.js",
     "prepublish": "npm run build-dev && npm run build-min"
   },
   "repository": {
@@ -27,7 +27,6 @@
   "homepage": "https://github.com/Project-OSRM/osrm-client-js",
   "devDependencies": {
     "browserify": "2",
-    "babelify": "^5.0.3",
     "uglifyjs": "^2.3.6",
     "jshint": "2",
     "tape": "^3.0.3"

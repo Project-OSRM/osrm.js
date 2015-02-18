@@ -1,25 +1,25 @@
-import tape from 'tape';
-import OSRM from '../src/osrm';
+var tape = require('tape'),
+    OSRM = require('../src/osrm');
 
-let testStreet = [52.4224, 13.333086];
-let testCoords = [[52.519930,13.438640], [52.513191,13.415852]];
+var testStreet = [52.4224, 13.333086];
+var testCoords = [[52.519930,13.438640], [52.513191,13.415852]];
 
-tape('locate', t => {
+tape('locate', function(t) {
   t.plan(2);
 
-  let osrm = new OSRM();
-  osrm.locate(testStreet, (error, response) => {
+  var osrm = new OSRM();
+  osrm.locate(testStreet, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.mapped_coordinate);
   });
 });
 
-tape('nearest', t => {
+tape('nearest', function(t) {
   t.plan(3);
 
-  let osrm = new OSRM();
-  osrm.nearest(testStreet, (error, response) => {
+  var osrm = new OSRM();
+  osrm.nearest(testStreet, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.mapped_coordinate);
@@ -27,11 +27,11 @@ tape('nearest', t => {
   });
 });
 
-tape('viaroute', t => {
+tape('viaroute', function(t) {
   t.plan(2);
 
-  let osrm = new OSRM();
-  osrm.route(testCoords, (error, response) => {
+  var osrm = new OSRM();
+  osrm.route(testCoords, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.route_geometry);
@@ -39,11 +39,11 @@ tape('viaroute', t => {
 });
 
 /* TODO Enable if matching branch is merged
-tape('match', t => {
+tape('match', function(t) {
   t.plan(1);
 
-  let osrm = new OSRM();
-  osrm.match(testCoords, (error, response) => {
+  var osrm = new OSRM();
+  osrm.match(testCoords, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.traces);
@@ -51,11 +51,11 @@ tape('match', t => {
 });
 */
 
-tape('table', t => {
+tape('table', function(t) {
   t.plan(2);
 
-  let osrm = new OSRM();
-  osrm.table(testCoords, (error, response) => {
+  var osrm = new OSRM();
+  osrm.table(testCoords, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.distance_table);
