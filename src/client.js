@@ -11,6 +11,11 @@ Client.prototype = {
     return 'loc=' + latLngs.map(function(c) {return c[0] + ',' + c[1]; } ).join("&loc=");
   },
 
+  _formatStampedLocs: function(latLngs, timestamps) {
+    var pairs = latLngs.map(function(c, i) { return [c[0]+','+c[1], timestamps[i]]; });
+    return 'loc=' + pairs.map(function(p) { return p.join("&t="); } ).join("&loc=");
+  },
+
   _onResponse: function(err, response, callback) {
     if (err) {
       callback(err);
@@ -41,8 +46,15 @@ Client.prototype = {
     this._request('nearest',  this._formatLocs([latLng]), callback);
   },
 
-  match: function(latLngs, callback) {
-    this._request('match',  this._formatLocs(latLngs), callback);
+  match: function(latLngs, timestamps, callback) {
+    if (timestamps) {
+      if (timestamps.length != latLngs.length)
+      {
+        callback(new Error("Invalid number of timestamps! Is " + timestamps.length + " should be: " + latLngs.length));
+      }
+      this._request('match',  this._formatStampedLocs(latLngs, timestamps), callback);
+    }
+    else this._request('match',  this._formatLocs(latLngs), callback);
   },
 
   route: function(latLngs, callback) {
