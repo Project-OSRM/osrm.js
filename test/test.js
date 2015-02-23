@@ -31,7 +31,7 @@ tape('viaroute', function(t) {
   t.plan(2);
 
   var osrm = new OSRM();
-  osrm.route(testCoords, function(error, response) {
+  osrm.route({coordinates: testCoords}, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.route_geometry);
@@ -43,7 +43,7 @@ tape('match', function(t) {
   t.plan(2);
 
   var osrm = new OSRM();
-  osrm.match(testCoords, null, function(error, response) {
+  osrm.match({coordinates: testCoords}, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.traces);
@@ -54,7 +54,7 @@ tape('match with timestamps', function(t) {
   t.plan(2);
 
   var osrm = new OSRM();
-  osrm.match(testCoords, [0, 1], function(error, response) {
+  osrm.match({coordinates: testCoords, timestamps: [0, 1]}, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.traces);
@@ -66,7 +66,7 @@ tape('table', function(t) {
   t.plan(2);
 
   var osrm = new OSRM();
-  osrm.table(testCoords, function(error, response) {
+  osrm.table({coordinates: testCoords}, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.distance_table);

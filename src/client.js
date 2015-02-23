@@ -46,23 +46,23 @@ Client.prototype = {
     this._request('nearest',  this._formatLocs([latLng]), callback);
   },
 
-  match: function(latLngs, timestamps, callback) {
-    if (timestamps) {
-      if (timestamps.length != latLngs.length)
+  match: function(query, callback) {
+    if (query.timestamps) {
+      if (query.timestamps.length != query.coordinates.length)
       {
-        callback(new Error("Invalid number of timestamps! Is " + timestamps.length + " should be: " + latLngs.length));
+        callback(new Error("Invalid number of timestamps! Is " + query.timestamps.length + " should be: " + query.length));
       }
-      this._request('match',  this._formatStampedLocs(latLngs, timestamps), callback);
+      this._request('match',  this._formatStampedLocs(query.coordinates, query.timestamps), callback);
     }
-    else this._request('match',  this._formatLocs(latLngs), callback);
+    else this._request('match',  this._formatLocs(query.coordinates), callback);
   },
 
-  route: function(latLngs, callback) {
-    this._request('viaroute',  this._formatLocs(latLngs), callback);
+  route: function(query, callback) {
+    this._request('viaroute',  this._formatLocs(query.coordinates), callback);
   },
 
-  table: function(latLngs, callback) {
-    this._request('table',  this._formatLocs(latLngs), callback);
+  table: function(query, callback) {
+    this._request('table',  this._formatLocs(query.coordinates), callback);
   },
 };
 
