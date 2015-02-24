@@ -1,9 +1,7 @@
-var corslite = require('corslite');
+var request = process.browser && require('browser-request') || require('request');
 
 function Client(url) {
-  this._url = url || "//router.project-osrm.org";
-  this._lastSend = 0;
-  this._lastReceived = 0;
+  this._url = url || (process.browser && "" || "http:") + "//router.project-osrm.org";
 }
 
 Client.prototype = {
@@ -16,25 +14,20 @@ Client.prototype = {
     return 'loc=' + pairs.map(function(p) { return p.join("&t="); } ).join("&loc=");
   },
 
-  _onResponse: function(err, response, callback) {
+  _onResponse: function(err, data, callback) {
     if (err) {
       callback(err);
       return;
     }
 
-    var data = JSON.parse(response.responseText);
     callback(null, data);
   },
 
   _request: function(service, encodedParams, callback) {
-    var url = this._url + '/' + service + '?' + encodedParams,
-        reqNumber = this._lastSend++;
-    corslite(url, function (err, response) {
-      if (reqNumber < this._lastReceived) return;
+    var url = this._url + '/' + service + '?' + encodedParams;
+    request.get({uri: url, json: true}, function (err, response, body) {
 
-      this._lastReceived = reqNumber;
-
-      this._onResponse(err, response, callback);
+      this._onResponse(err, body, callback);
     }.bind(this));
   },
 

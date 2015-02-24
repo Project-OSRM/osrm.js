@@ -32,9 +32,7 @@
     "tape": "^3.0.3"
   },
   "dependencies": {
-    "corslite": "^0.0.6"
-  },
-  "env": {
-    "browser": true
+    "browser-request": "^0.3.3",
+    "request": "^2.53.0"
   }
 }
