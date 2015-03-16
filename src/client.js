@@ -1,4 +1,5 @@
-var request = process.browser && require('browser-request') || require('request');
+var request = process.browser && require('browser-request') || require('request'),
+    headers = process.browser && {} || {'User-Agent:': 'osrm-client-js/0.0.5'};
 
 function Client(url) {
   this._url = url || (process.browser && "" || "http:") + "//router.project-osrm.org";
@@ -25,7 +26,7 @@ Client.prototype = {
 
   _request: function(service, encodedParams, callback) {
     var url = this._url + '/' + service + '?' + encodedParams;
-    request.get({uri: url, json: true}, function (err, response, body) {
+    request.get({uri: url, json: true, headers: headers}, function (err, response, body) {
 
       this._onResponse(err, body, callback);
     }.bind(this));

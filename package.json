@@ -7,7 +7,7 @@
     "dist": "dist"
   },
   "scripts": {
-    "test": "browserify ./test/test.js > dist/osrm.test.js",
+    "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js",
     "build-dev": "browserify -d src/osrm.js -s osrm > dist/osrm.dev.js",
     "build-min": "browserify src/osrm.js -s osrm | uglifyjs -c warnings=false -m > dist/osrm.min.js",
     "prepublish": "npm run build-dev && npm run build-min"
