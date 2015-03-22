@@ -42,24 +42,42 @@ tape('viaroute', function(t) {
 });
 
 tape('match', function(t) {
-  t.plan(2);
+  t.plan(4);
 
   var osrm = new OSRM();
   osrm.match({coordinates: traceCoordinates}, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.matchings);
+    t.ok(response.matchings.length > 0);
+    t.deepEqual(response.matchings[0].matched_points, [[52.542648,13.393252],[52.543056,13.394707],[52.542107,13.397389]]);
   });
 });
 
 tape('match with timestamps', function(t) {
-  t.plan(2);
+  t.plan(4);
 
   var osrm = new OSRM();
-  osrm.match({coordinates: traceCoordinates, traceTimestamps: [0, 1]}, function(error, response) {
+  osrm.match({coordinates: traceCoordinates, timestamps: traceTimestamps}, function(error, response) {
     console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
     t.ok(response.matchings);
+    t.ok(response.matchings.length > 0);
+    t.deepEqual(response.matchings[0].matched_points, [[52.542648,13.393252],[52.543056,13.394707],[52.542107,13.397389]]);
+  });
+});
+
+tape('match with timestamps and classification', function(t) {
+  t.plan(5);
+
+  var osrm = new OSRM();
+  osrm.match({coordinates: traceCoordinates, timestamps: traceTimestamps, classify: true}, function(error, response) {
+    console.log("Response: " + JSON.stringify(response));
+    t.notOk(error);
+    t.ok(response.matchings);
+    t.ok(response.matchings.length > 0);
+    t.deepEqual(response.matchings[0].matched_points, [[52.542648,13.393252],[52.543056,13.394707],[52.542107,13.397389]]);
+    t.ok(response.matchings[0].confidence !== undefined);
   });
 });
 
