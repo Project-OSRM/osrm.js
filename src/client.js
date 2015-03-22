@@ -15,6 +15,14 @@ Client.prototype = {
     return 'loc=' + pairs.map(function(p) { return p.join("&t="); } ).join("&loc=");
   },
 
+  _formatOptions: function(options) {
+      var keyValue = [];
+      for (var key in options) {
+          keyValue.push(key + "=" + options[key]);
+      }
+      return keyValue.join("&");
+  },
+
   _onResponse: function(err, data, callback) {
     if (err) {
       callback(err);
@@ -32,6 +40,17 @@ Client.prototype = {
     }.bind(this));
   },
 
+  _filterOptions: function(options, keys) {
+    var filtered = {};
+    for (var k in options) {
+        if (keys.indexOf(k) >= 0 ) {
+          continue;
+        }
+        filtered[k] = options[k];
+    }
+    return filtered;
+  },
+
   locate: function(latLng, callback) {
     this._request('locate',  this._formatLocs([latLng]), callback);
   },
@@ -41,22 +60,25 @@ Client.prototype = {
   },
 
   match: function(query, callback) {
+    var options = this._filterOptions(query, ['coordinates', 'timestamps']);
     if (query.timestamps) {
       if (query.timestamps.length != query.coordinates.length)
       {
         callback(new Error("Invalid number of timestamps! Is " + query.timestamps.length + " should be: " + query.length));
       }
-      this._request('match',  this._formatStampedLocs(query.coordinates, query.timestamps), callback);
+      this._request('match',  this._formatStampedLocs(query.coordinates, query.timestamps) + this._formatOptions(options), callback);
     }
-    else this._request('match',  this._formatLocs(query.coordinates), callback);
+    else this._request('match',  this._formatLocs(query.coordinates) + this._formatOptions(options), callback);
   },
 
   route: function(query, callback) {
-    this._request('viaroute',  this._formatLocs(query.coordinates), callback);
+    var options = this._filterOptions(query, ['coordinates']);
+    this._request('viaroute',  this._formatLocs(query.coordinates) + this._formatOptions(options), callback);
   },
 
   table: function(query, callback) {
-    this._request('table',  this._formatLocs(query.coordinates), callback);
+    var options = this._filterOptions(query, ['coordinates']);
+    this._request('table',  this._formatLocs(query.coordinates) + this._formatOptions(options), callback);
   },
 };
 
