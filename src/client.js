@@ -51,6 +51,13 @@ Client.prototype = {
     return filtered;
   },
 
+  _joinParams: function(p1, p2) {
+    if (p1 === "") return p2;
+    if (p2 === "") return p1;
+
+    return [p1, p2].join("&");
+  },
+
   locate: function(latLng, callback) {
     this._request('locate',  this._formatLocs([latLng]), callback);
   },
@@ -66,19 +73,19 @@ Client.prototype = {
       {
         callback(new Error("Invalid number of timestamps! Is " + query.timestamps.length + " should be: " + query.length));
       }
-      this._request('match',  this._formatStampedLocs(query.coordinates, query.timestamps) + this._formatOptions(options), callback);
+      this._request('match',  this._joinParams(this._formatStampedLocs(query.coordinates, query.timestamps), this._formatOptions(options)), callback);
     }
-    else this._request('match',  this._formatLocs(query.coordinates) + this._formatOptions(options), callback);
+    else this._request('match',  this._joinParams(this._formatLocs(query.coordinates),this._formatOptions(options)), callback);
   },
 
   route: function(query, callback) {
     var options = this._filterOptions(query, ['coordinates']);
-    this._request('viaroute',  this._formatLocs(query.coordinates) + this._formatOptions(options), callback);
+    this._request('viaroute',  this._joinParams(this._formatLocs(query.coordinates), this._formatOptions(options)), callback);
   },
 
   table: function(query, callback) {
     var options = this._filterOptions(query, ['coordinates']);
-    this._request('table',  this._formatLocs(query.coordinates) + this._formatOptions(options), callback);
+    this._request('table',  this._joinParams(this._formatLocs(query.coordinates), this._formatOptions(options)), callback);
   },
 };
 
