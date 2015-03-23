@@ -1,5 +1,5 @@
 var request = process.browser && require('browser-request') || require('request'),
-    headers = process.browser && {} || {'User-Agent:': 'osrm-client-js/0.0.6'};
+    headers = process.browser && {} || {'User-Agent': 'osrm-client-js/0.0.6'};
 
 function Client(url) {
   this._url = url || (process.browser && "" || "http:") + "//router.project-osrm.org";
