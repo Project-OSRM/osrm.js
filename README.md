@@ -24,9 +24,11 @@ osrm.nearest([52.4224, 13.333086], function (err, result) {
   // Output: {"status":0,"mapped_coordinate":[52.422590,13.333838],"name":"Mariannenstraße"}
 });
 
-osrm.table([52.4224, 13.333086], function (err, result) {
+osrm.table({
+  coordinates: [[52.519930,13.438640], [52.513191,13.415852]]
+}, function (err, result) {
   console.log(result);
-  // Output: {"distance_table":[[0,2207],[2175,0]]}
+  // Output: {"distance_table":[[0,2175],[2175,0]]}
 });
 
 var query = {coordinates: [[52.519930,13.438640], [52.513191,13.415852]]};
