@@ -1,5 +1,5 @@
 {
-  "name": "osrm-client",
+  "name": "osrm.js",
   "version": "5.0.0-rc.2",
   "description": "REST client for the OSRM server API",
   "main": "src/osrm.js",
@@ -8,7 +8,8 @@
   },
   "scripts": {
     "prepub": "browserify -d src/osrm.js -s osrm > dist/osrm.raw.js && uglifyjs dist/osrm.raw.js -c -m --source-map=dist/osrm.js.map -o dist/osrm.js",
-    "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js"
+    "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js",
+    "coverage": "nyc tap ./test/test.js && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -22,13 +23,17 @@
   "author": "TheMarex",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/Project-OSRM/osrm-client-js/issues"
+    "url": "https://github.com/Project-OSRM/osrm.js/issues"
   },
-  "homepage": "https://github.com/Project-OSRM/osrm-client-js",
+  "homepage": "https://github.com/Project-OSRM/osrm.js",
   "dependencies": {
     "browserify": "^13.0.0",
     "qs": "^6.1.0",
     "tape": "^4.5.1",
     "uglify-js": "^2.6.2"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.9",
+    "nyc": "^6.4.0"
   }
 }
