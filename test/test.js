@@ -1,93 +1,132 @@
-var tape = require('tape'),
+var test = require('tape'),
     OSRM = require('../src/osrm');
 
-var testStreet = [52.4224, 13.333086];
-var testCoords = [[52.519930,13.438640], [52.513191,13.415852]];
-var traceCoordinates = [[52.542648,13.393252], [52.543079,13.394780], [52.542107,13.397389]];
+var testStreet = [13.333086, 52.4224];
+var testCoords = [[13.438640,52.519930], [13.415852,52.513191]];
+var traceCoordinates = [[13.393252,52.542648], [13.394780,52.543079], [13.397389,52.542107]];
 var traceTimestamps = [1424684612, 1424684616, 1424684620];
 
-
-tape('locate', function(t) {
+test('nearest', function(t) {
   t.plan(2);
 
   var osrm = new OSRM();
-  osrm.locate(testStreet, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
+  osrm.nearest({coordinates: [testStreet]}, function(error, response) {
     t.notOk(error);
-    t.ok(response.mapped_coordinate);
+    t.ok(response.waypoints);
   });
 });
 
-tape('nearest', function(t) {
-  t.plan(3);
-
-  var osrm = new OSRM();
-  osrm.nearest(testStreet, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
-    t.notOk(error);
-    t.ok(response.mapped_coordinate);
-    t.ok(response.name !== undefined);
-  });
-});
-
-tape('viaroute', function(t) {
-  t.plan(2);
+test('route with default parameters', function(t) {
+  t.plan(10);
 
   var osrm = new OSRM();
   osrm.route({coordinates: testCoords}, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
-    t.ok(response.route_geometry);
+    t.ok(response.waypoints);
+    t.ok(response.routes);
+    t.ok(response.routes[0].geometry);
+    t.ok(response.routes[0].distance > 0);
+    t.ok(response.routes[0].duration > 0);
+    t.ok(response.routes[0].legs);
+    t.equal(response.routes[0].legs.length, 1);
+    t.ok(response.routes[0].legs[0].duration > 0);
+    t.ok(response.routes[0].legs[0].distance > 0);
   });
 });
 
-tape('match', function(t) {
-  t.plan(4);
+test('route with steps', function(t) {
+  t.plan(11);
+
+  var osrm = new OSRM();
+  osrm.route({coordinates: testCoords, steps: true}, function(error, response) {
+    t.notOk(error);
+    t.ok(response.waypoints);
+    t.ok(response.routes);
+    t.ok(response.routes[0].geometry);
+    t.ok(response.routes[0].distance > 0);
+    t.ok(response.routes[0].duration > 0);
+    t.ok(response.routes[0].legs);
+    t.equal(response.routes[0].legs.length, 1);
+    t.ok(response.routes[0].legs[0].duration > 0);
+    t.ok(response.routes[0].legs[0].distance > 0);
+    // at leats arrive + depart
+    t.ok(response.routes[0].legs[0].steps.length >= 2);
+  });
+});
+
+test('match', function(t) {
+  t.plan(12);
 
   var osrm = new OSRM();
   osrm.match({coordinates: traceCoordinates}, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
+    t.equal(response.code, "Ok");
     t.ok(response.matchings);
     t.ok(response.matchings.length > 0);
-    t.deepEqual(response.matchings[0].matched_points, [[52.542648,13.393252],[52.543056,13.394707],[52.542107,13.397389]]);
-  });
-});
-
-tape('match with timestamps', function(t) {
-  t.plan(4);
-
-  var osrm = new OSRM();
-  osrm.match({coordinates: traceCoordinates, timestamps: traceTimestamps}, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
-    t.notOk(error);
-    t.ok(response.matchings);
-    t.ok(response.matchings.length > 0);
-    t.deepEqual(response.matchings[0].matched_points, [[52.542648,13.393252],[52.543056,13.394707],[52.542107,13.397389]]);
-  });
-});
-
-tape('match with timestamps and classification', function(t) {
-  t.plan(5);
-
-  var osrm = new OSRM();
-  osrm.match({coordinates: traceCoordinates, timestamps: traceTimestamps, classify: true}, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
-    t.notOk(error);
-    t.ok(response.matchings);
-    t.ok(response.matchings.length > 0);
-    t.deepEqual(response.matchings[0].matched_points, [[52.542648,13.393252],[52.543056,13.394707],[52.542107,13.397389]]);
+    t.ok(response.tracepoints);
+    var reference_locations = [[13.393224, 52.542684], [13.394739, 52.543067], [13.397412, 52.542075]];
+    response.tracepoints.forEach(function (tp, index) {
+      t.ok(tp);
+      t.deepEqual(tp.location, reference_locations[index]);
+    });
     t.ok(response.matchings[0].confidence !== undefined);
   });
 });
 
-tape('table', function(t) {
-  t.plan(2);
+test('match with timestamps and classification', function(t) {
+  t.plan(12);
+
+  var osrm = new OSRM();
+  osrm.match({coordinates: traceCoordinates, timestamps: traceTimestamps}, function(error, response) {
+    t.notOk(error);
+    t.equal(response.code, "Ok");
+    t.ok(response.matchings);
+    t.ok(response.matchings.length > 0);
+    t.ok(response.tracepoints);
+    var reference_locations = [[13.393224, 52.542684], [13.394739, 52.543067], [13.397412, 52.542075]];
+    response.tracepoints.forEach(function (tp, index) {
+      t.ok(tp);
+      t.deepEqual(tp.location, reference_locations[index]);
+    });
+    t.ok(response.matchings[0].confidence !== undefined);
+  });
+});
+
+test('table', function(t) {
+  t.plan(7);
 
   var osrm = new OSRM();
   osrm.table({coordinates: testCoords}, function(error, response) {
-    console.log("Response: " + JSON.stringify(response));
     t.notOk(error);
-    t.ok(response.distance_table);
+    t.equal(response.code, "Ok");
+    t.ok(response.durations);
+    t.equal(response.durations.length, 2);
+    t.equal(response.durations[0].length, 2);
+    t.equal(response.durations[0][0], 0);
+    t.equal(response.durations[1][1], 0);
   });
 });
+
+test('trip', function(t) {
+  t.plan(4);
+
+  var osrm = new OSRM();
+  osrm.trip({coordinates: testCoords}, function(error, response) {
+    t.notOk(error);
+    t.equal(response.code, "Ok");
+    t.ok(response.waypoints);
+    t.ok(response.trips);
+  });
+});
+
+test('tile', function(assert) {
+  assert.plan(2);
+  var osrm = new OSRM();
+  osrm.tile([17603, 10747, 15], function(err, result) {
+    assert.ifError(err);
+    var reference = 18160.;
+    var ratio = Math.round(Math.abs(1 - result.length / reference) * 100);
+    assert.ok(ratio < 10);
+  });
+});
+

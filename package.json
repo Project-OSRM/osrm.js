@@ -1,23 +1,23 @@
 {
   "name": "osrm-client",
-  "version": "0.0.9",
+  "version": "5.0.0-rc.2",
   "description": "REST client for the OSRM server API",
   "main": "src/osrm.js",
   "directories": {
     "dist": "dist"
   },
   "scripts": {
-    "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js",
-    "build-dev": "browserify -d src/osrm.js -s osrm > dist/osrm.dev.js",
-    "build-min": "browserify src/osrm.js -s osrm | uglifyjs -c warnings=false -m > dist/osrm.min.js",
-    "prepublish": "npm run build-dev && npm run build-min"
+    "prepub": "browserify -d src/osrm.js -s osrm > dist/osrm.raw.js && uglifyjs dist/osrm.raw.js -c -m --source-map=dist/osrm.js.map -o dist/osrm.js",
+    "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Project-OSRM/osrm-client-js.git"
   },
   "keywords": [
-    "osrm"
+    "osrm",
+    "REST",
+    "client"
   ],
   "author": "TheMarex",
   "license": "BSD-2-Clause",
@@ -25,14 +25,10 @@
     "url": "https://github.com/Project-OSRM/osrm-client-js/issues"
   },
   "homepage": "https://github.com/Project-OSRM/osrm-client-js",
-  "devDependencies": {
-    "browserify": "2",
-    "uglifyjs": "^2.3.6",
-    "jshint": "2",
-    "tape": "^3.0.3"
-  },
   "dependencies": {
-    "browser-request": "^0.3.3",
-    "request": "^2.53.0"
+    "browserify": "^13.0.0",
+    "qs": "^6.1.0",
+    "tape": "^4.5.1",
+    "uglify-js": "^2.6.2"
   }
 }
