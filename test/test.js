@@ -6,6 +6,14 @@ var testCoords = [[13.438640,52.519930], [13.415852,52.513191]];
 var traceCoordinates = [[13.393252,52.542648], [13.394780,52.543079], [13.397389,52.542107]];
 var traceTimestamps = [1424684612, 1424684616, 1424684620];
 
+test('contructor', function(t) {
+  t.plan(3);
+
+  t.throws(function() {new OSRM([1, 2, 3]); });
+  t.doesNotThrow(function() {new OSRM({url: "http://127.0.0.1:5000", profile: "bicycle", timeout: 2000});});
+  t.doesNotThrow(function() {new OSRM("http://127.0.0.1:5000");});
+});
+
 test('nearest', function(t) {
   t.plan(2);
 

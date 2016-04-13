@@ -8,15 +8,21 @@ var http = require('http'),
 function OSRM(arg) {
   this._url = 'https://router.project-osrm.org';
   this._profile = 'driving';
+  this._timeout = 10000; // 10 seconds
 
   if (typeof arg === 'string')
   {
-      this._url = url;
+      this._url = arg;
+  }
+  else if (Array.isArray(arg))
+  {
+    throw new Error('Argument must be string or options object');
   }
   else if (typeof arg === 'object')
   {
       this._url = arg.url || this._url;
       this._profile = arg.profile || this._profile;
+      this._timeout = arg.timeout || this._timeout;
   }
   else if (typeof arg !== 'undefined')
   {
@@ -80,12 +86,16 @@ OSRM.prototype = {
     {
       url += '?' + option_string;
     }
+
+    var timeout = setTimeout(function() {  callback(new Error("Request timed out")); }, this._timeout);
+
     this._get(url, function (response) {
       var body = '';
       response.on('data', function(data) {
         body += data;
       });
       response.on('end', function() {
+        clearTimeout(timeout);
         if (format === 'json')
         {
           callback(null, JSON.parse(body));
