@@ -14,6 +14,24 @@ test('contructor', function(t) {
   t.doesNotThrow(function() {new OSRM("http://127.0.0.1:5000");});
 });
 
+test('request', function(t) {
+  t.plan(10);
+
+  var osrm = new OSRM();
+  osrm.request('/route/v1/driving/13.438640,52.519930;13.415852,52.513191', function(error, response) {
+    t.notOk(error);
+    t.ok(response.waypoints);
+    t.ok(response.routes);
+    t.ok(response.routes[0].geometry);
+    t.ok(response.routes[0].distance > 0);
+    t.ok(response.routes[0].duration > 0);
+    t.ok(response.routes[0].legs);
+    t.equal(response.routes[0].legs.length, 1);
+    t.ok(response.routes[0].legs[0].duration > 0);
+    t.ok(response.routes[0].legs[0].distance > 0);
+  });
+});
+
 test('nearest', function(t) {
   t.plan(2);
 

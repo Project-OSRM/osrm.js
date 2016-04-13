@@ -79,15 +79,21 @@ OSRM.prototype = {
     return qs.stringify(options);
   },
 
-  _request: function(service, version, query, format, options, callback) {
+  _encodeUrl: function(service, version, query, format, options, callback) {
     var url = this._url + '/' + service + '/' + version + '/' + this._profile + '/' + query + '.' + format;
     var option_string = this._stringifyOptions(options);
     if (option_string.length > 0)
     {
       url += '?' + option_string;
     }
+    return url;
+  },
 
-    var timeout = setTimeout(function() {  callback(new Error("Request timed out")); }, this._timeout);
+  request: function(arg, callback) {
+    var url = (typeof arg === 'string') && (this._url + arg) ||
+      this._encodeUrl(arg.service, arg.version, arg.query, arg.format, arg.options);
+
+    var timeout = setTimeout(function() { callback(new Error("Request timed out")); }, this._timeout);
 
     this._get(url, function (response) {
       var body = '';
@@ -96,10 +102,12 @@ OSRM.prototype = {
       });
       response.on('end', function() {
         clearTimeout(timeout);
-        if (format === 'json')
+        var format = response.headers['content-type'].split(";")[0];
+        if (format === 'application/json')
         {
           callback(null, JSON.parse(body));
         }
+        // unknonw, pass through
         else
         {
           callback(null, body);
@@ -119,7 +127,7 @@ OSRM.prototype = {
     }
     var query = this._stringifyCoordinates(options.coordinates);
     options = this._filterOptions(options, ['coordinates']);
-    this._request('nearest', 'v1', query, 'json', options, callback);
+    this.request({service: 'nearest', version: 'v1', query: query, format: 'json', options: options}, callback);
   },
 
   match: function(options, callback) {
@@ -134,7 +142,7 @@ OSRM.prototype = {
     }
     var query = this._stringifyCoordinates(options.coordinates);
     options = this._filterOptions(options, ['coordinates']);
-    this._request('match', 'v1', query, 'json', options, callback);
+    this.request({service: 'match', version: 'v1', query: query, format: 'json', options: options}, callback);
   },
 
   route: function(options, callback) {
@@ -147,7 +155,7 @@ OSRM.prototype = {
 
     var query = this._stringifyCoordinates(options.coordinates);
     options = this._filterOptions(options, ['coordinates']);
-    this._request('route', 'v1', query, 'json', options, callback);
+    this.request({service: 'route', version: 'v1', query: query, format: 'json', options: options}, callback);
   },
 
   trip: function(options, callback) {
@@ -160,7 +168,7 @@ OSRM.prototype = {
 
     var query = this._stringifyCoordinates(options.coordinates);
     options = this._filterOptions(options, ['coordinates']);
-    this._request('trip', 'v1', query, 'json', options, callback);
+    this.request({service: 'trip', version: 'v1', query: query, format: 'json', options: options}, callback);
   },
 
   table: function(options, callback) {
@@ -173,12 +181,12 @@ OSRM.prototype = {
 
     var query = this._stringifyCoordinates(options.coordinates);
     options = this._filterOptions(options, ['coordinates']);
-    this._request('table', 'v1', query, 'json', options, callback);
+    this.request({service: 'table', version: 'v1', query: query, format: 'json', options: options}, callback);
   },
 
   tile: function(xyz, callback) {
     var query = 'tile(' + xyz.join(',') + ')';
-    this._request('tile', 'v1', query, 'mvt', {}, callback);
+    this.request({service: 'tile', version: 'v1', query: query, format: 'mvt', options: {}}, callback);
   },
 };
 
