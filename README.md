@@ -22,7 +22,7 @@ osrm.route({
       steps: true,
       alternatives: false,
       overview: 'simplified',
-      geometry: 'polyline'
+      geometries: 'polyline'
    }, function(err, result) {
    console.log(result);
 });
@@ -31,7 +31,7 @@ osrm.trip({
       coordinates: [[13.438640,52.519930], [13.415852,52.513191]],
       steps: true,
       overview: 'simplified',
-      geometry: 'polyline'
+      geometries: 'polyline'
    }, function(err, result) {
    console.log(result);
 });
@@ -41,7 +41,7 @@ osrm.match({
       timestamps: [1460585940, 1460585945],
       steps: true,
       overview: 'simplified',
-      geometry: 'polyline'
+      geometries: 'polyline'
    }, function(err, result) {
    console.log(result);
 });
@@ -58,7 +58,7 @@ osrm.tile([17603, 10747, 15], function(err, result) {
    console.log(result); // pbf encoded vector tile
 });
 
-You can also pass it query paths directly:
+//You can also pass it query paths directly:
 
 osrm.request('/route/v1/driving/13.438640,52.519930;13.415852,52.513191', function(err, result) {
 });
