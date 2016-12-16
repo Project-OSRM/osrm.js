@@ -150,7 +150,7 @@ test('tile', function(assert) {
   var osrm = new OSRM();
   osrm.tile([17603, 10747, 15], function(err, result) {
     assert.ifError(err);
-    var reference = 18160.;
+    var reference = 38768.;
     var ratio = Math.round(Math.abs(1 - result.length / reference) * 100);
     assert.ok(ratio < 10);
   });
