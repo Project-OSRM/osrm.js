@@ -65,7 +65,7 @@ OSRM.prototype = {
   },
 
   _stringifyOptionsArray: function(array) {
-    array.map(function(value) { return value === null && '' || value; }).join(';')
+    return array.map(function(value) { return value === null && '' || value; }).join(';')
   },
 
   _stringifyOptions: function(options) {
