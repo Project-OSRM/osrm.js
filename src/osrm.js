@@ -102,7 +102,13 @@ OSRM.prototype = {
       });
       response.on('end', function() {
         clearTimeout(timeout);
-        var format = response.headers['content-type'].split(";")[0];
+        var format;
+        if (response.headers['content-type'] && response.headers['content-type'].indexOf(";") >= 0) {
+          format = response.headers['content-type'].split(";")[0];
+        }
+        else {
+          format = response.headers['content-type'];
+        }
         if (format === 'application/json')
         {
           callback(null, JSON.parse(body));
