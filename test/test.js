@@ -20,6 +20,7 @@ test('request', function(t) {
   var osrm = new OSRM();
   osrm.request('/route/v1/driving/13.438640,52.519930;13.415852,52.513191', function(error, response) {
     t.notOk(error);
+    t.ok(response);
     t.ok(response.waypoints);
     t.ok(response.routes);
     t.ok(response.routes[0].geometry);

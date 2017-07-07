@@ -102,6 +102,11 @@ OSRM.prototype = {
       });
       response.on('end', function() {
         clearTimeout(timeout);
+        if (response.headers['content-type'] === undefined)
+        {
+            return callback(new Error("Response does not have a content-type set."));
+        }
+
         var format = response.headers['content-type'].split(";")[0];
         if (format === 'application/json')
         {
