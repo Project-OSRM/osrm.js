@@ -15,7 +15,7 @@ test('contructor', function(t) {
 });
 
 test('request', function(t) {
-  t.plan(10);
+  t.plan(11);
 
   var osrm = new OSRM();
   osrm.request('/route/v1/driving/13.438640,52.519930;13.415852,52.513191', function(error, response) {
@@ -91,7 +91,7 @@ test('match', function(t) {
     t.ok(response.matchings);
     t.ok(response.matchings.length > 0);
     t.ok(response.tracepoints);
-    var reference_locations = [[13.393224, 52.542684], [13.394739, 52.543067], [13.397412, 52.542075]];
+    var reference_locations = [[13.393225, 52.542685], [13.39474, 52.543068], [13.397412, 52.542076]];
     response.tracepoints.forEach(function (tp, index) {
       t.ok(tp);
       t.deepEqual(tp.location, reference_locations[index]);
@@ -110,7 +110,7 @@ test('match with timestamps and classification', function(t) {
     t.ok(response.matchings);
     t.ok(response.matchings.length > 0);
     t.ok(response.tracepoints);
-    var reference_locations = [[13.393224, 52.542684], [13.394739, 52.543067], [13.397412, 52.542075]];
+    var reference_locations = [[13.393225, 52.542685], [13.39474, 52.543068], [13.397412, 52.542076]];
     response.tracepoints.forEach(function (tp, index) {
       t.ok(tp);
       t.deepEqual(tp.location, reference_locations[index]);
@@ -151,7 +151,7 @@ test('tile', function(assert) {
   var osrm = new OSRM();
   osrm.tile([17603, 10747, 15], function(err, result) {
     assert.ifError(err);
-    var reference = 38768.;
+    var reference = 48768.;
     var ratio = Math.round(Math.abs(1 - result.length / reference) * 100);
     assert.ok(ratio < 10);
   });
