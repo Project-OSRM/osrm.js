@@ -91,7 +91,7 @@ test('match', function(t) {
     t.ok(response.matchings);
     t.ok(response.matchings.length > 0);
     t.ok(response.tracepoints);
-    var reference_locations = [[13.393225, 52.542685], [13.39474, 52.543068], [13.397412, 52.542076]];
+    var reference_locations = [[13.393223, 52.542687], [13.39474, 52.543068], [13.397412, 52.542076]];
     response.tracepoints.forEach(function (tp, index) {
       t.ok(tp);
       t.deepEqual(tp.location, reference_locations[index]);
@@ -110,7 +110,7 @@ test('match with timestamps and classification', function(t) {
     t.ok(response.matchings);
     t.ok(response.matchings.length > 0);
     t.ok(response.tracepoints);
-    var reference_locations = [[13.393225, 52.542685], [13.39474, 52.543068], [13.397412, 52.542076]];
+    var reference_locations = [[13.393223, 52.542687], [13.39474, 52.543068], [13.397412, 52.542076]];
     response.tracepoints.forEach(function (tp, index) {
       t.ok(tp);
       t.deepEqual(tp.location, reference_locations[index]);
@@ -153,7 +153,8 @@ test('tile', function(assert) {
     assert.ifError(err);
     var reference = 48768.;
     var ratio = Math.round(Math.abs(1 - result.length / reference) * 100);
+    console.log("ratio : "+ ratio);
+    console.log("result  : "+JSON.stringify(result));
     assert.ok(ratio < 10);
   });
 });
-
