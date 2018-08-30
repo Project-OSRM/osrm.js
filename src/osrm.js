@@ -38,7 +38,6 @@ function OSRM(arg) {
   }
 
   this._get = function(url, callback) {
-    console.log("URL : "+ url);
     var parsedUrl = Url.parse(url);
     var options = {
       protocol : parsedUrl.protocol,
