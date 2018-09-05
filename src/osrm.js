@@ -51,13 +51,13 @@ function OSRM(arg) {
     {
       var clientRequest = http.get(options, callback)
       clientRequest.setTimeout(this._timeout,timeoutCb);
-      return clientRequest.end();
+      return clientRequest;
     }
     else if (protocol == "https:")
     {
       var clientRequest = https.get(options, callback)
       clientRequest.setTimeout(this._timeout,timeoutCb);
-      return clientRequest.end();
+      return clientRequest;
     }
     throw Error("No protocol handler found for " + protocol);
   }
@@ -110,7 +110,7 @@ OSRM.prototype = {
 
   //  var timeout = setTimeout(function() { callback(new Error("Request timed out")); }, this._timeout);
 
-    this._get(url, function (response) {
+    var request = this._get(url, function (response) {
       var body = '';
       response.on('data', function(data) {
         body += data;
@@ -134,13 +134,14 @@ OSRM.prototype = {
         }
       });
     },function () {
-      console.error("osrm TIMEOUT detected -> " + err);
+      console.error("osrm TIMEOUT detected -> returning an error");
       return callback(new Error("Request timed out"));
     }).on('error', function(err) {
       console.error("osrm error detected -> " + err);
       //clearTimeout(timeout);
       callback(err);
     });
+    request.end();
   },
 
   nearest: function(options, callback) {
