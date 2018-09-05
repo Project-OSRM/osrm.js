@@ -37,7 +37,7 @@ function OSRM(arg) {
       throw new Error("Unsupported protocol: " + protocol);
   }
 
-  this._get = function(url, callback) {
+  this._get = function(url, callback,timeoutCb) {
     var parsedUrl = Url.parse(url);
     var options = {
       protocol : parsedUrl.protocol,
@@ -49,11 +49,15 @@ function OSRM(arg) {
     };
     if (protocol === "http:")
     {
-      return http.get(options, callback);
+      var clientRequest = http.get(options, callback)
+      clientRequest.setTimeout(this._timeout,timeoutCb);
+      return clientRequest.end();
     }
     else if (protocol == "https:")
     {
-      return https.get(options, callback);
+      var clientRequest = https.get(options, callback)
+      clientRequest.setTimeout(this._timeout,timeoutCb);
+      return clientRequest.end();
     }
     throw Error("No protocol handler found for " + protocol);
   }
@@ -104,7 +108,7 @@ OSRM.prototype = {
     var url = (typeof arg === 'string') && (this._url + arg) ||
       this._encodeUrl(arg.service, arg.version, arg.query, arg.format, arg.options);
 
-    var timeout = setTimeout(function() { callback(new Error("Request timed out")); }, this._timeout);
+  //  var timeout = setTimeout(function() { callback(new Error("Request timed out")); }, this._timeout);
 
     this._get(url, function (response) {
       var body = '';
@@ -112,7 +116,7 @@ OSRM.prototype = {
         body += data;
       });
       response.on('end', function() {
-        clearTimeout(timeout);
+    //    clearTimeout(timeout);
         if (response.headers['content-type'] === undefined)
         {
             return callback(new Error("Response does not have a content-type set."));
@@ -129,8 +133,12 @@ OSRM.prototype = {
           callback(null, body);
         }
       });
+    },function () {
+      console.error("osrm TIMEOUT detected -> " + err);
+      return callback(new Error("Request timed out"));
     }).on('error', function(err) {
-      clearTimeout(timeout);
+      console.error("osrm error detected -> " + err);
+      //clearTimeout(timeout);
       callback(err);
     });
   },
