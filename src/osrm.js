@@ -49,13 +49,13 @@ function OSRM(arg) {
     };
     if (protocol === "http:")
     {
-      var clientRequest = http.get(options, callback)
+      var clientRequest = http.request(options, callback);
       clientRequest.setTimeout(this._timeout,timeoutCb);
       return clientRequest;
     }
     else if (protocol == "https:")
     {
-      var clientRequest = https.get(options, callback)
+      var clientRequest = https.request(options, callback);
       clientRequest.setTimeout(this._timeout,timeoutCb);
       return clientRequest;
     }
