@@ -1,6 +1,6 @@
 {
   "name": "osrm.js",
-  "version": "5.6.3",
+  "version": "5.6.4",
   "description": "REST client for the OSRM server API",
   "main": "src/osrm.js",
   "directories": {

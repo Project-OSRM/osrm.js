@@ -109,37 +109,45 @@ OSRM.prototype = {
       this._encodeUrl(arg.service, arg.version, arg.query, arg.format, arg.options);
 
   //  var timeout = setTimeout(function() { callback(new Error("Request timed out")); }, this._timeout);
-
+    var isTimeout = false;
     var request = this._get(url, function (response) {
       var body = '';
+
       response.on('data', function(data) {
         body += data;
       });
       response.on('end', function() {
     //    clearTimeout(timeout);
-        if (response.headers['content-type'] === undefined)
-        {
-            return callback(new Error("Response does not have a content-type set."));
-        }
+        if(isTimeout == true) {
+          console.error("DO NOTHING MORE --> timeout is allready callbacked");
+          return;
+        } else {
 
-        var format = response.headers['content-type'].split(";")[0];
-        if (format === 'application/json')
-        {
-          callback(null, JSON.parse(body));
-        }
-        // unknonw, pass through
-        else
-        {
-          callback(null, body);
+          if (response.headers['content-type'] === undefined)
+          {
+              return callback(new Error("Response does not have a content-type set."));
+          }
+
+          var format = response.headers['content-type'].split(";")[0];
+          if (format === 'application/json')
+          {
+            return callback(null, JSON.parse(body));
+          }
+          // unknonw, pass through
+          else
+          {
+            return callback(null, body);
+          }
         }
       });
     },function () {
       console.error("osrm TIMEOUT detected -> returning an error");
+      isTimeout = true;
       return callback(new Error("Request timed out"));
     }).on('error', function(err) {
       console.error("osrm error detected -> " + err);
       //clearTimeout(timeout);
-      callback(err);
+      return callback(err);
     });
     request.end();
   },
