@@ -93,15 +93,13 @@ OSRM.prototype = {
     var url = (typeof arg === 'string') && (this._url + arg) ||
       this._encodeUrl(arg.service, arg.version, arg.query, arg.format, arg.options);
 
-    var timeout = setTimeout(function() { callback(new Error("Request timed out")); }, this._timeout);
-
-    this._get(url, function (response) {
+    var timedout;
+    var request = this._get(url, function (response) {
       var body = '';
       response.on('data', function(data) {
         body += data;
       });
       response.on('end', function() {
-        clearTimeout(timeout);
         if (response.headers['content-type'] === undefined)
         {
             return callback(new Error("Response does not have a content-type set."));
@@ -119,7 +117,12 @@ OSRM.prototype = {
         }
       });
     }).on('error', function(err) {
+      if (timedout) return;
       callback(err);
+    }).setTimeout(this._timeout, function() {
+      request.abort();
+      timedout = true;
+      callback(new Error("Request timed out"));
     });
   },
 
