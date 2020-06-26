@@ -7,7 +7,7 @@
     "dist": "dist"
   },
   "scripts": {
-    "prepub": "browserify -d src/osrm.js -s osrm > dist/osrm.raw.js && uglifyjs dist/osrm.raw.js -c -m --source-map \"filename='dist/osrm.js.map'\" -o dist/osrm.js",
+    "prepub": "browserify -d src/osrm.js -s osrm > dist/osrm.raw.js && uglifyjs dist/osrm.raw.js -c -m -o dist/osrm.js",
     "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js",
     "coverage": "nyc tap ./test/test.js && nyc report --reporter=text-lcov | coveralls"
   },

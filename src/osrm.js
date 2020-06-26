@@ -134,7 +134,7 @@ OSRM.prototype = {
       });
     },function () {
       console.error("osrm TIMEOUT detected -> returning an error");
-      isTimeout = true;
+      timedout = true;
       return callback(new Error("Request timed out"));
     }).on('error', function(err) {
       if (timedout) return;
