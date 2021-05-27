@@ -3,12 +3,13 @@
 var http = require('http'),
     https = require('https'),
     qs = require('qs'),
-    url = require('url');
+    Url = require('url');
 
 function OSRM(arg) {
   this._url = 'https://router.project-osrm.org';
   this._profile = 'driving';
   this._timeout = 10000; // 10 seconds
+  this._headers = {};
 
   if (typeof arg === 'string')
   {
@@ -23,26 +24,40 @@ function OSRM(arg) {
       this._url = arg.url || this._url;
       this._profile = arg.profile || this._profile;
       this._timeout = arg.timeout || this._timeout;
+      this._headers = arg.headers || this._headers;
   }
   else if (typeof arg !== 'undefined')
   {
     throw new Error('Argument must be string or options object');
   }
 
-  var protocol = url.parse(this._url).protocol;
+  var protocol = Url.parse(this._url).protocol;
   if (protocol != "http:" && protocol != "https:")
   {
       throw new Error("Unsupported protocol: " + protocol);
   }
 
-  this._get = function(url, callback) {
+  this._get = function(url, callback,timeoutCb) {
+    var parsedUrl = Url.parse(url);
+    var options = {
+      protocol : parsedUrl.protocol,
+      hostname : parsedUrl.hostname,
+      port : parsedUrl.port,
+      path : parsedUrl.path,
+      headers : this._headers,
+      timeout : this._timeout
+    };
     if (protocol === "http:")
     {
-      return http.get(url, callback);
+      var clientRequest = http.request(options, callback);
+      clientRequest.setTimeout(this._timeout,timeoutCb);
+      return clientRequest;
     }
     else if (protocol == "https:")
     {
-      return https.get(url, callback);
+      var clientRequest = https.request(options, callback);
+      clientRequest.setTimeout(this._timeout,timeoutCb);
+      return clientRequest;
     }
     throw Error("No protocol handler found for " + protocol);
   }
@@ -96,6 +111,7 @@ OSRM.prototype = {
     var timedout;
     var request = this._get(url, function (response) {
       var body = '';
+
       response.on('data', function(data) {
         body += data;
       });
@@ -116,6 +132,10 @@ OSRM.prototype = {
           callback(null, body);
         }
       });
+    },function () {
+      console.error("osrm TIMEOUT detected -> returning an error");
+      timedout = true;
+      return callback(new Error("Request timed out"));
     }).on('error', function(err) {
       if (timedout) return;
       callback(err);
@@ -124,6 +144,7 @@ OSRM.prototype = {
       timedout = true;
       callback(new Error("Request timed out"));
     });
+    request.end();
   },
 
   nearest: function(options, callback) {

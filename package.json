@@ -1,13 +1,13 @@
 {
   "name": "osrm.js",
-  "version": "5.5.0",
+  "version": "5.6.4",
   "description": "REST client for the OSRM server API",
   "main": "src/osrm.js",
   "directories": {
     "dist": "dist"
   },
   "scripts": {
-    "prepub": "browserify -d src/osrm.js -s osrm > dist/osrm.raw.js && uglifyjs dist/osrm.raw.js -c -m --source-map=dist/osrm.js.map -o dist/osrm.js",
+    "prepub": "browserify -d src/osrm.js -s osrm > dist/osrm.raw.js && uglifyjs dist/osrm.raw.js -c -m -o dist/osrm.js",
     "test": "node ./test/test.js && browserify ./test/test.js > dist/osrm.test.js",
     "coverage": "nyc tap ./test/test.js && nyc report --reporter=text-lcov | coveralls"
   },
@@ -33,7 +33,7 @@
     "uglify-js": "^2.6.2"
   },
   "devDependencies": {
-    "coveralls": "^2.11.9",
-    "nyc": "^6.4.0"
+    "coveralls": "^3.0.2",
+    "nyc": "^13.1.0"
   }
 }
